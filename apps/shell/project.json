@@ -1,26 +1,27 @@
 {
-  "name": "first-microfrontend",
+  "name": "shell",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "first-microfrontend",
-  "sourceRoot": "apps/first-microfrontend/src",
+  "sourceRoot": "apps/shell/src",
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@angular-devkit/build-angular:browser",
+      "executor": "@nx/angular:webpack-browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/first-microfrontend",
-        "index": "apps/first-microfrontend/src/index.html",
-        "main": "apps/first-microfrontend/src/main.ts",
+        "outputPath": "dist/apps/shell",
+        "index": "apps/shell/src/index.html",
+        "main": "apps/shell/src/main.ts",
         "polyfills": ["zone.js"],
-        "tsConfig": "apps/first-microfrontend/tsconfig.app.json",
-        "assets": [
-          "apps/first-microfrontend/src/favicon.ico",
-          "apps/first-microfrontend/src/assets"
-        ],
-        "styles": ["apps/first-microfrontend/src/styles.less"],
-        "scripts": []
+        "tsConfig": "apps/shell/tsconfig.app.json",
+        "assets": ["apps/shell/src/favicon.ico", "apps/shell/src/assets"],
+        "styles": ["apps/shell/src/styles.less"],
+        "scripts": [],
+        "customWebpackConfig": {
+          "path": "apps/shell/webpack.config.js"
+        },
+        "commonChunk": false
       },
       "configurations": {
         "production": {
@@ -36,7 +37,10 @@
               "maximumError": "4kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "customWebpackConfig": {
+            "path": "apps/shell/webpack.prod.config.js"
+          }
         },
         "development": {
           "buildOptimizer": false,
@@ -50,38 +54,40 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@angular-devkit/build-angular:dev-server",
+      "executor": "@nx/angular:webpack-dev-server",
       "configurations": {
         "production": {
-          "browserTarget": "first-microfrontend:build:production"
+          "browserTarget": "shell:build:production"
         },
         "development": {
-          "browserTarget": "first-microfrontend:build:development"
+          "browserTarget": "shell:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4200,
+        "publicHost": "http://localhost:4200"
+      }
     },
     "extract-i18n": {
-      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "executor": "ngx-build-plus:extract-i18n",
       "options": {
-        "browserTarget": "first-microfrontend:build"
+        "browserTarget": "shell:build",
+        "extraWebpackConfig": "apps/shell/webpack.config.js"
       }
     },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "apps/first-microfrontend/**/*.ts",
-          "apps/first-microfrontend/**/*.html"
-        ]
+        "lintFilePatterns": ["apps/shell/**/*.ts", "apps/shell/**/*.html"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/first-microfrontend/jest.config.ts",
+        "jestConfig": "apps/shell/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
